@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.DS_Store
+model/model_rf.pkl
+*.pkl
+live_data.csv
+live_scraped_cache.json
+*.download
+model/FINAL_TRAINING_DATA_25000.csv
