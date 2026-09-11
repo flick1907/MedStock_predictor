@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedStock Predictor — AI-Powered Pharmacy Demand Forecasting</title>
+  <meta name="description"
+    content="Predict medicine demand, optimize reorder quantities, and manage expiry risk using AI-powered forecasting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Background canvas for animated particles -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ── HEADER ───────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="13" width="24" height="6" rx="3" fill="currentColor" />
+            <rect x="13" y="4" width="6" height="24" rx="3" fill="currentColor" />
+          </svg>
+        </div>
+        <span class="logo-text">MedStock<span class="logo-accent">AI</span></span>
+      </div>
+      <nav class="nav">
+        <a href="#predict-section" class="nav-link">Predict</a>
+        <a href="#how-section" class="nav-link">How It Works</a>
+        <div id="api-status-badge" class="status-badge offline">
+          <span class="status-dot"></span>
+          <span class="status-label">Checking API…</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Powered by Random Forest ML</div>
+      <h1 class="hero-title">
+        Predict Medicine Demand<br />
+        <span class="gradient-text">Before You Run Out</span>
+      </h1>
+      <p class="hero-subtitle">
+        Enter your pharmacy data and get AI-driven demand forecasts,
+        reorder alerts, and expiry risk assessments — in seconds.
+      </p>
+      <a href="#predict-section" class="hero-cta" id="hero-cta-btn">
+        Start Predicting
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card floating">
+        <div class="mini-stat">
+          <span class="mini-label">Next 7-Day Demand</span>
+          <span class="mini-val gradient-text" id="demo-demand">142 units</span>
+        </div>
+        <div class="mini-divider"></div>
+        <div class="mini-stat">
+          <span class="mini-label">Reorder In</span>
+          <span class="mini-val">12 days</span>
+        </div>
+        <div class="mini-divider"></div>
+        <div class="mini-stat">
+          <span class="mini-label">Expiry Risk</span>
+          <span class="mini-val risk-low">Low ✓</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────────────── -->
+  <section class="how-section" id="how-section">
+    <div class="section-label">How It Works</div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">📦</div>
+        <h3>Enter Stock Data</h3>
+        <p>Input your medicine details, current stock levels, and historical sales data.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🌡️</div>
+        <h3>Live Data Enrichment</h3>
+        <p>The API auto-fetches real-time weather and disease trend data to enrich predictions.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🤖</div>
+        <h3>AI Forecasting</h3>
+        <p>A trained Random Forest model predicts demand for the next 7 days.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">📊</div>
+        <h3>Actionable Insights</h3>
+        <p>Get reorder quantity, days until reorder, and expiry risk — ready to act on.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PREDICT FORM ──────────────────────────────────────── -->
+  <section class="predict-section" id="predict-section">
+    <div class="section-label">Demand Prediction</div>
+    <div class="predict-layout">
+
+      <!-- Form Panel -->
+      <div class="form-panel glass-panel">
+        <h2 class="panel-title">Medicine Details</h2>
+        <p class="panel-sub">Fields marked <span class="req-star">*</span> are required. Live data fields are
+          auto-filled if left blank.</p>
+
+        <form id="predict-form" novalidate>
+
+          <!-- Required Section -->
+          <div class="field-section">
+            <div class="field-section-title">
+              <svg viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              Core Information
+            </div>
+            <div class="form-row two-col">
+              <div class="form-group">
+                <label for="medicine_name">Medicine Name <span class="req-star">*</span></label>
+                <input type="text" id="medicine_name" name="medicine_name" placeholder="e.g. Diclofenac" required
+                  maxlength="40" />
+              </div>
+              <div class="form-group">
+                <label for="atc_code">ATC Code <span class="req-star">*</span></label>
+                <input type="text" id="atc_code" name="atc_code" placeholder="e.g. M01AB" required maxlength="20" />
+              </div>
+            </div>
+            <div class="form-row three-col">
+              <div class="form-group">
+                <label for="past_7_day_sales">Past 7-Day Sales <span class="req-star">*</span></label>
+                <input type="number" id="past_7_day_sales" name="past_7_day_sales" placeholder="30" min="0" required />
+              </div>
+              <div class="form-group">
+                <label for="past_30_day_avg_sales">30-Day Avg Sales <span class="req-star">*</span></label>
+                <input type="number" id="past_30_day_avg_sales" name="past_30_day_avg_sales" placeholder="4.25" min="0"
+                  step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="current_stock">Current Stock <span class="req-star">*</span></label>
+                <input type="number" id="current_stock" name="current_stock" placeholder="146" min="0" required />
+              </div>
+            </div>
+            <div class="form-row two-col">
+              <div class="form-group">
+                <label for="days_to_expiry">Days to Expiry <span class="req-star">*</span></label>
+                <input type="number" id="days_to_expiry" name="days_to_expiry" placeholder="317" min="0" required />
+              </div>
+              <div class="form-group">
+                <label for="price_per_unit">Price per Unit (₹) <span class="req-star">*</span></label>
+                <input type="number" id="price_per_unit" name="price_per_unit" placeholder="150" min="1" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Live Data Section -->
+          <div class="field-section collapsible">
+            <button type="button" class="field-section-title toggle-btn" id="live-toggle-btn" aria-expanded="false">
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8z" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 5v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              Override Live Data
+              <span class="optional-badge">Optional — auto-filled by API</span>
+              <svg class="chevron" viewBox="0 0 16 16" fill="none">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="collapsible-body" id="live-collapsible">
+              <div class="form-row three-col">
+                <div class="form-group">
+                  <label for="live_temp">Temperature (°C)</label>
+                  <input type="number" id="live_temp" name="live_temp" placeholder="Auto" step="0.1" />
+                </div>
+                <div class="form-group">
+                  <label for="live_humidity">Humidity (%)</label>
+                  <input type="number" id="live_humidity" name="live_humidity" placeholder="Auto" min="0" max="100"
+                    step="0.1" />
+                </div>
+                <div class="form-group">
+                  <label for="is_rainy">Rainy Season</label>
+                  <select id="is_rainy" name="is_rainy">
+                    <option value="">Auto-detect</option>
+                    <option value="1">Yes (1)</option>
+                    <option value="0">No (0)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row two-col">
+                <div class="form-group">
+                  <label for="fever_trend">Fever Trend (0–100)</label>
+                  <input type="number" id="fever_trend" name="fever_trend" placeholder="Auto" min="0" max="100" />
+                </div>
+                <div class="form-group">
+                  <label for="allergy_trend">Allergy Trend (0–100)</label>
+                  <input type="number" id="allergy_trend" name="allergy_trend" placeholder="Auto" min="0" max="100" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <span class="btn-text">Run Prediction</span>
+            <span class="btn-loader" hidden>
+              <svg class="spinner" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              Predicting…
+            </span>
+          </button>
+
+          <div id="form-error" class="form-error" hidden></div>
+        </form>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="results-panel" id="results-panel">
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🔮</div>
+          <p>Fill in the form and hit<br /><strong>Run Prediction</strong> to see results.</p>
+        </div>
+
+        <!-- Result Cards (hidden until prediction) -->
+        <div class="result-cards" id="result-cards" hidden>
+
+          <div class="result-header">
+            <div>
+              <div class="result-medicine-name" id="res-medicine-name">—</div>
+              <div class="result-timestamp" id="res-timestamp">—</div>
+            </div>
+            <button class="copy-btn" id="copy-btn" title="Copy JSON">
+              <svg viewBox="0 0 20 20" fill="none">
+                <rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5" />
+                <path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" stroke="currentColor"
+                  stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              Copy JSON
+            </button>
+          </div>
+
+          <!-- Key Metrics Row -->
+          <div class="metrics-grid">
+            <div class="metric-card primary">
+              <div class="metric-icon">📈</div>
+              <div class="metric-label">7-Day Demand</div>
+              <div class="metric-value" id="res-demand">—</div>
+              <div class="metric-sub">units predicted</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">🔔</div>
+              <div class="metric-label">Reorder In</div>
+              <div class="metric-value" id="res-days-reorder">—</div>
+              <div class="metric-sub">days remaining</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon">📦</div>
+              <div class="metric-label">Order Quantity</div>
+              <div class="metric-value" id="res-reorder-qty">—</div>
+              <div class="metric-sub">units to order</div>
+            </div>
+          </div>
+
+          <!-- Expiry Risk Bar -->
+          <div class="expiry-card glass-panel">
+            <div class="expiry-header">
+              <span class="expiry-title">Expiry Risk</span>
+              <span class="expiry-badge" id="res-expiry-badge">—</span>
+            </div>
+            <div class="expiry-bar-bg">
+              <div class="expiry-bar-fill" id="expiry-bar-fill"></div>
+            </div>
+            <div class="expiry-labels">
+              <span>Low</span><span>Medium</span><span>High</span>
+            </div>
+          </div>
+
+          <!-- Live Data Used -->
+          <div class="live-data-card glass-panel">
+            <div class="live-data-title">
+              <svg viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+              </svg>
+              Live Data Used by Model
+            </div>
+            <div class="live-chips" id="live-chips">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <!-- Raw JSON Accordion -->
+          <details class="raw-json-details">
+            <summary>View Raw JSON Response</summary>
+            <pre id="raw-json"></pre>
+          </details>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="logo-text" style="font-size:1rem;">MedStock<span class="logo-accent">AI</span></span>
+      <span class="footer-sep">·</span>
+      <span>FastAPI backend connected on the current origin</span>
+      <span class="footer-sep">·</span>
+      <span>Built with ❤️ for smarter pharmacy management</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
