@@ -108,22 +108,9 @@ def predict(req: predict_request):
     fever_trend   = req.fever_trend   if req.fever_trend   is not None else live['fever_trend']
     allergy_trend = req.allergy_trend if req.allergy_trend is not None else live['allergy_trend']
 
-    # 2. Current month - from system
     current_month = datetime.now().month
 
-    # 3. Feature order MUST match retrained model exactly (11 features)
-    # Verified order from retrain.py output:
-    # [0] past_7_day_sales
-    # [1] past_30_day_avg_sales
-    # [2] current_stock
-    # [3] days_to_expiry
-    # [4] price_per_unit
-    # [5] live_temp
-    # [6] live_humidity
-    # [7] is_rainy
-    # [8] fever_trend
-    # [9] allergy_trend
-    # [10] month
+    
     features = [[
         req.past_7_day_sales,
         req.past_30_day_avg_sales,
@@ -138,7 +125,6 @@ def predict(req: predict_request):
         current_month,
     ]]
 
-    # 4. Predict
     try:
         pred_demand = int(model.predict(features)[0])
     except Exception as e:
@@ -148,7 +134,6 @@ def predict(req: predict_request):
     daily_avg = req.past_30_day_avg_sales if req.past_30_day_avg_sales > 0 else 1
     next_7_day_demand = pred_demand
 
-    # How many days current stock will last
     days_to_reorder = int(req.current_stock / daily_avg)
 
     # How much to reorder (cover 30 days of predicted demand, minus current stock)
