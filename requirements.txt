@@ -3,3 +3,7 @@ uvicorn[standard]
 pandas
 scikit-learn
 certifi
+sqlalchemy
+psycopg2-binary
+pyjwt
+python-dotenv
